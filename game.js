@@ -12,8 +12,6 @@ var cols = height / cellHeight;
 var liveCellColor = "limegreen";
 var deadCellColor = "#000000";
 
-var probability = 0.9;
-
 var gameCanvasContext;
 
 $(document).ready(function() {
@@ -69,9 +67,7 @@ function updateGame() {
 
     //console.log(cellNumberArray);
     //fillCanvas(gameCanvasContext);
-    //liveCellColor = "red";
     setTimeout(updateGame, 1);
-    //liveCellColor = "blue";
 }
 
 function initCells() {
@@ -88,7 +84,7 @@ function initNumbers() {
     for (var rowIndex = 0; rowIndex < rows; ++rowIndex) {
         cellNumberArray[rowIndex] = [];
         for (var colIndex = 0; colIndex < cols; ++colIndex) {
-            cellNumberArray[rowIndex][colIndex] = Math.random() * 100 + probability % 10 < 5 ? 1 : 0;
+            cellNumberArray[rowIndex][colIndex] = Math.random() > 0.95 ? 1 : 0;
         }
     }
 }
