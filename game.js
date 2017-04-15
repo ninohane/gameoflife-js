@@ -27,8 +27,9 @@ $(document).ready(function() {
     //window.gameCanvasContext.translate(0.5, 0.5);
 
     //initNumbers();
-    initNumbersBorders();
+    //initNumbersBorders();
     //initNumbersHB();
+    initNumbersR();
     initCells();
     fillCanvas(gameCanvasContext);
     updateGame(gameCanvasContext);
@@ -70,7 +71,7 @@ function updateGame() {
 
     //console.log(cellNumberArray);
     //fillCanvas(gameCanvasContext);
-    setTimeout(updateGame, 1);
+    setTimeout(updateGame, 0.3);
 }
 
 function initCells() {
@@ -113,7 +114,20 @@ function initNumbersHB() {
         cellNumberArray[rowIndex] = [];
         tempNumberArray[rowIndex] = [];
         for (var colIndex = 0; colIndex < cols; ++colIndex) {
-            cellNumberArray[rowIndex][colIndex] = (colIndex) % 9 === 0 || (rowIndex + 8) % 9 === 0 ? 1 : 0;
+            cellNumberArray[rowIndex][colIndex] = (colIndex) % 9 === 0 || (rowIndex) % 9 === 0 ? 1 : 0;
+            put = !put;
+            tempNumberArray[rowIndex][colIndex] = 0;
+        }
+    }
+}
+
+function initNumbersR() {
+    var put = true;
+    for (var rowIndex = 0; rowIndex < rows; ++rowIndex) {
+        cellNumberArray[rowIndex] = [];
+        tempNumberArray[rowIndex] = [];
+        for (var colIndex = 0; colIndex < cols; ++colIndex) {
+            cellNumberArray[rowIndex][colIndex] = rowIndex % 45 === 0 || colIndex % 7 === 0 ? 1 : 0
             put = !put;
             tempNumberArray[rowIndex][colIndex] = 0;
         }
