@@ -1,13 +1,14 @@
 var cellCanvasArray = [];
 var cellNumberArray = [];
+var tempNumberArray = [];
 
 var cellWidth = 9;
 var cellHeight = 9;
 var width = 900;
 var height = 900;
 
-var rows = width / cellWidth;
-var cols = height / cellHeight;
+var cols = width / cellWidth;
+var rows = height / cellHeight;
 
 var liveCellColor = "limegreen";
 var deadCellColor = "#000000";
@@ -25,7 +26,9 @@ $(document).ready(function() {
     window.gameCanvasContext = gameCanvas.getContext("2d");
     //window.gameCanvasContext.translate(0.5, 0.5);
 
-    initNumbers();
+    //initNumbers();
+    initNumbersBorders();
+    //initNumbersHB();
     initCells();
     fillCanvas(gameCanvasContext);
     updateGame(gameCanvasContext);
@@ -44,7 +47,7 @@ function fillCanvas() {
     for (var rowIndex = 0; rowIndex < rows; ++rowIndex) {
         for (var colIndex = 0; colIndex < cols; ++colIndex) {
             gameCanvasContext.beginPath();
-            gameCanvasContext.rect(rowIndex * cellWidth, colIndex * cellHeight, cellWidth, cellHeight);
+            gameCanvasContext.rect(colIndex * cellWidth, rowIndex * cellHeight, cellWidth, cellHeight);
             gameCanvasContext.fillStyle = cellCanvasArray[rowIndex][colIndex]["color"];
             gameCanvasContext.fill();
         }
@@ -59,7 +62,7 @@ function updateGame() {
             var colorStr = cellNumberArray[rowIndex][colIndex] === 0 ? deadCellColor : liveCellColor;
             cellCanvasArray[rowIndex][colIndex] = { "color": colorStr };
             gameCanvasContext.beginPath();
-            gameCanvasContext.rect(rowIndex * cellWidth, colIndex * cellHeight, cellWidth, cellHeight);
+            gameCanvasContext.rect(colIndex * cellWidth, rowIndex * cellHeight, cellWidth, cellHeight);
             gameCanvasContext.fillStyle = cellCanvasArray[rowIndex][colIndex]["color"];
             gameCanvasContext.fill();
         }
@@ -83,11 +86,40 @@ function initCells() {
 function initNumbers() {
     for (var rowIndex = 0; rowIndex < rows; ++rowIndex) {
         cellNumberArray[rowIndex] = [];
+        tempNumberArray[rowIndex] = [];
         for (var colIndex = 0; colIndex < cols; ++colIndex) {
-            cellNumberArray[rowIndex][colIndex] = Math.random() > 0.95 ? 1 : 0;
+            cellNumberArray[rowIndex][colIndex] = Math.random() > 0.9 ? 1 : 0;
+            tempNumberArray[rowIndex][colIndex] = 0;
         }
     }
 }
+
+function initNumbersBorders() {
+    var put = true;
+    for (var rowIndex = 0; rowIndex < rows; ++rowIndex) {
+        cellNumberArray[rowIndex] = [];
+        tempNumberArray[rowIndex] = [];
+        for (var colIndex = 0; colIndex < cols; ++colIndex) {
+            cellNumberArray[rowIndex][colIndex] = rowIndex === 0 || rowIndex === rows - 1 || colIndex === 0 || colIndex === cols - 1 ? 1 : 0;
+            put = !put;
+            tempNumberArray[rowIndex][colIndex] = 0;
+        }
+    }
+}
+
+function initNumbersHB() {
+    var put = true;
+    for (var rowIndex = 0; rowIndex < rows; ++rowIndex) {
+        cellNumberArray[rowIndex] = [];
+        tempNumberArray[rowIndex] = [];
+        for (var colIndex = 0; colIndex < cols; ++colIndex) {
+            cellNumberArray[rowIndex][colIndex] = (colIndex) % 9 === 0 || (rowIndex + 8) % 9 === 0 ? 1 : 0;
+            put = !put;
+            tempNumberArray[rowIndex][colIndex] = 0;
+        }
+    }
+}
+
 
 function singleIteration() {
     for (var rowIndex = 0; rowIndex < rows; ++rowIndex) {
@@ -95,11 +127,16 @@ function singleIteration() {
             var neigbourCount = getNeighbourCount(cellNumberArray, rowIndex, colIndex);
             //console.log("Neighbour: " + neigbourCount);
             if (cellNumberArray[rowIndex][colIndex] === 1) {
-                if (neigbourCount < 2) cellNumberArray[rowIndex][colIndex] = 0;
-                else if (neigbourCount > 3) cellNumberArray[rowIndex][colIndex] = 0;
+                if (neigbourCount < 2) tempNumberArray[rowIndex][colIndex] = 0;
+                else if (neigbourCount > 3) tempNumberArray[rowIndex][colIndex] = 0;
             } else {
-                if (neigbourCount === 3) cellNumberArray[rowIndex][colIndex] = 1;
+                if (neigbourCount === 3) tempNumberArray[rowIndex][colIndex] = 1;
             }
+        }
+    }
+    for (var rowIndex = 0; rowIndex < rows; ++rowIndex) {
+        for (var colIndex = 0; colIndex < cols; ++colIndex) {
+            cellNumberArray[rowIndex][colIndex] = tempNumberArray[rowIndex][colIndex];
         }
     }
 }
